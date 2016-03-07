@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.bahmni</groupId>
-		<artifactId>rules-engine</artifactId>
+		<groupId>org.openmrs.module</groupId>
+		<artifactId>rulesengine</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>rules-engine-api</artifactId>
+	<artifactId>rulesengine-api</artifactId>
 	<packaging>jar</packaging>
 	<name>Rules Engine Module API</name>
 	<description>API project for RulesEngine</description>
@@ -27,13 +27,12 @@
 		
 
 		<!-- Begin OpenMRS core -->
-		
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<type>jar</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
@@ -60,9 +59,18 @@
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
-				
 		<!-- End OpenMRS core -->
-		
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+
 	</dependencies>
 	
 	<build>
