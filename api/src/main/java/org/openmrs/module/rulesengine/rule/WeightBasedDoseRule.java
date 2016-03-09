@@ -5,19 +5,16 @@ import org.openmrs.*;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.rulesengine.CIELDictionary;
-import org.openmrs.module.rulesengine.contract.Dose;
-import org.springframework.stereotype.Service;
+import org.openmrs.module.rulesengine.domain.Dose;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-@Service
-public class WeightBasedDoseRule implements DoseRule {
+public class WeightBasedDoseRule {
 
     private final String REGISTRATION_ENCOUNTER_TYPE = "REG";
 
-    @Override
     public Dose calculateDose(String patientUuid, Double baseDose) throws Exception {
         Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
         Encounter selectedEncounter = getLatestEncounterByPatient(patient);

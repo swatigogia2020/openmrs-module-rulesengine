@@ -20,15 +20,5 @@
 	<!-- Add here beans related to the API context -->
 
 	<context:component-scan base-package="org.openmrs.module.rulesengine"/>
-	<!-- Services accessible via Context.getService() -->
-	<bean parent="serviceContext">
-		<property name="moduleService">
-			<list>
-				<value>org.openmrs.module.rulesengine.service.DoseRuleService</value>
-				<bean name="doseRuleService"
-					  class="org.openmrs.module.rulesengine.service.DoseRuleServiceImpl"/>
-			</list>
-		</property>
-	</bean>
 
 </beans>

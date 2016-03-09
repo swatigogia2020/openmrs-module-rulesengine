@@ -2,17 +2,15 @@ package org.openmrs.module.rulesengine;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.module.rulesengine.contract.Dose;
+import org.openmrs.module.rulesengine.domain.Dose;
 import org.openmrs.module.rulesengine.rule.WeightBasedDoseRule;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 
 public class WeightBasedDoseRuleTest extends BaseModuleWebContextSensitiveTest {
 
-    @Autowired
-    private WeightBasedDoseRule weightBasedDoseRule;
+    private WeightBasedDoseRule weightBasedDoseRule = new WeightBasedDoseRule();
 
     @Before
     public void setUp() throws Exception {
