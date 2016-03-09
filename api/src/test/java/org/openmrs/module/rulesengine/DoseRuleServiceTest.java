@@ -9,7 +9,7 @@ import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
 import static org.junit.Assert.assertEquals;
 
-public class DoseRuleServiceIT extends BaseModuleWebContextSensitiveTest {
+public class DoseRuleServiceTest extends BaseModuleWebContextSensitiveTest {
 
     private DoseRuleService doseRuleService;
 
