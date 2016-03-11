@@ -15,11 +15,12 @@
 		<url>http://openmrs.org</url>
 	</organization>
 
-	<scm>
-		<connection>scm:svn:https://svn.openmrs.org/openmrs-modules/rules-engine/trunk/</connection>
-		<developerConnection>scm:svn:https://svn.openmrs.org/openmrs-modules/rules-engine/trunk/</developerConnection>
-		<url>https://svn.openmrs.org/openmrs-modules/rules-engine/trunk/</url>
-	</scm>
+    <scm>
+        <connection>scm:git:git@github.com:bahmni/openmrs-module-rulesengine.git</connection>
+        <developerConnection>scm:git:git@github.com:bahmni/openmrs-module-rulesengine.git</developerConnection>
+        <url>https://github.com/bahmni/openmrs-module-rulesengine/</url>
+        <tag>HEAD</tag>
+    </scm>
 
 	<modules>
 		<module>api</module>
