@@ -1,52 +1,36 @@
 package org.openmrs.module.rulesengine.rule;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
-import org.openmrs.*;
-import org.openmrs.api.ObsService;
+import org.openmrs.Encounter;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.rulesengine.CIELDictionary;
 import org.openmrs.module.rulesengine.domain.Dose;
+import org.openmrs.module.rulesengine.service.EncounterService;
+import org.openmrs.module.rulesengine.service.ObservationService;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 public class BSABasedDoseRule {
 
-    private final String REGISTRATION_ENCOUNTER_TYPE = "REG";
+    private final ObservationService observationService = new ObservationService();
+    private final EncounterService encounterService = new EncounterService();
 
     public Dose calculateDose(String patientUuid, Double baseDose) throws Exception {
 
         Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
 
-        Encounter selectedEncounter = getLatestEncounterByPatient(patient);
+        Encounter selectedEncounter = encounterService.getLatestEncounterByPatient(patient);
 
         Integer ageInYears = ageInYears(patient, selectedEncounter.getEncounterDatetime());
 
-        Double height = getHeight(patient, selectedEncounter);
-        Double weight = getWeight(patient, selectedEncounter);
+        Double height = observationService.getLatestHeight(patient, selectedEncounter);
+        Double weight = observationService.getLatestWeight(patient, selectedEncounter);
         Double bsa = calculateBSA(height, weight, ageInYears);
 
         double roundedUpValue = new BigDecimal(bsa * baseDose).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return new Dose(roundedUpValue, Dose.DoseUnit.mg);
-    }
-
-    private Encounter getLatestEncounterByPatient(Patient patient) {
-        EncounterType registration = Context.getEncounterService().getEncounterType(REGISTRATION_ENCOUNTER_TYPE);
-        List<Encounter> encounters = Context.getEncounterService()
-            .getEncounters(patient, null, null, null, null, Arrays.asList(registration), null, null, null, false);
-
-        Encounter selectedEncounter = encounters.get(0);
-
-        for (Encounter encounter : encounters) {
-            if(encounter.getEncounterDatetime().after(selectedEncounter.getEncounterDatetime())){
-                selectedEncounter = encounter;
-            }
-        }
-        return selectedEncounter;
     }
 
     private Integer ageInYears(Patient patient, Date asOfDate) {
@@ -59,30 +43,6 @@ public class BSABasedDoseRule {
             return Math.sqrt(weight * height / 3600);
         }
         return Math.pow(weight, 0.425) * Math.pow(height, 0.725) * 0.007184;
-    }
-
-    private Double getWeight(Person person, Encounter selectedEncounter) throws Exception {
-        ObsService obsService = Context.getObsService();
-        Concept weight = Context.getConceptService().getConceptByUuid(CIELDictionary.WEIGHT_UUID);
-
-        List<Obs> obss = obsService.getObservations(Arrays.asList(person), Arrays.asList(selectedEncounter), Arrays.asList(weight),
-            null, null, null, null, null, null, null, null, false);
-        if(CollectionUtils.isEmpty(obss)){
-            throw new Exception("Weight is not available");
-        }
-        return obss.get(0).getValueNumeric();
-    }
-
-    private Double getHeight(Person person, Encounter selectedEncounter) throws Exception {
-        ObsService obsService = Context.getObsService();
-        Concept height = Context.getConceptService().getConceptByUuid(CIELDictionary.HEIGHT_UUID);
-
-        List<Obs> obss = obsService.getObservations(Arrays.asList(person), Arrays.asList(selectedEncounter), Arrays.asList(height),
-            null, null, null, null, null, null, null, null, false);
-        if(CollectionUtils.isEmpty(obss)){
-            throw new Exception("Height is not available");
-        }
-        return obss.get(0).getValueNumeric();
     }
 
 }
