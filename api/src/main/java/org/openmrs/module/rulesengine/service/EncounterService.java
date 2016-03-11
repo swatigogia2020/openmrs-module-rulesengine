@@ -12,9 +12,9 @@ import java.util.List;
 
 public class EncounterService {
 
-    private final String REGISTRATION_ENCOUNTER_TYPE = "REG";
+    private static final String REGISTRATION_ENCOUNTER_TYPE = "REG";
 
-    public Encounter getLatestEncounterByPatient(Patient patient) {
+    public static Encounter getLatestEncounterByPatient(Patient patient) {
         EncounterType registration = Context.getEncounterService().getEncounterType(REGISTRATION_ENCOUNTER_TYPE);
         List<Encounter> encounters = Context.getEncounterService()
             .getEncounters(patient, null, null, null, null, Arrays.asList(registration), null, null, null, false);

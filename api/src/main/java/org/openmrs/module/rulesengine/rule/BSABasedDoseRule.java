@@ -6,30 +6,33 @@ import org.openmrs.module.rulesengine.domain.Dose;
 import org.openmrs.module.rulesengine.service.EncounterService;
 import org.openmrs.module.rulesengine.service.ObservationService;
 import org.openmrs.module.rulesengine.service.PatientService;
-import org.openmrs.module.rulesengine.util.CalculationsUtil;
+import org.openmrs.module.rulesengine.util.BahmniMath;
 
 import java.util.Date;
 
 public class BSABasedDoseRule {
 
-    private final ObservationService observationService = new ObservationService();
-    private final EncounterService encounterService = new EncounterService();
-    private final PatientService patientService = new PatientService();
+    public static Double calculateBSA(Double height, Double weight, Integer patientAgeInYears) {
+        if (patientAgeInYears <= 15 && weight <= 40) {
+            return Math.sqrt(weight * height / 3600);
+        }
+        return Math.pow(weight, 0.425) * Math.pow(height, 0.725) * 0.007184;
+    }
 
-    public Dose calculateDose(String patientUuid, Double baseDose) throws Exception {
+    public static Dose calculateDose(String patientUuid, Double baseDose) throws Exception {
 
-        Patient patient = patientService.getPatientByUuid(patientUuid);
+        Patient patient = PatientService.getPatientByUuid(patientUuid);
 
-        Encounter selectedEncounter = encounterService.getLatestEncounterByPatient(patient);
+        Encounter selectedEncounter = EncounterService.getLatestEncounterByPatient(patient);
 
         Date asOfDate = selectedEncounter.getEncounterDatetime();
-        Integer ageInYears = CalculationsUtil.ageInYears(patient.getBirthdate(), asOfDate);
+        Integer ageInYears = BahmniMath.ageInYears(patient.getBirthdate(), asOfDate);
 
-        Double height = observationService.getLatestHeight(patient);
-        Double weight = observationService.getLatestWeight(patient);
-        Double bsa = CalculationsUtil.calculateBSA(height, weight, ageInYears);
+        Double height = ObservationService.getLatestHeight(patient);
+        Double weight = ObservationService.getLatestWeight(patient);
+        Double bsa = calculateBSA(height, weight, ageInYears);
 
-        double roundedUpValue = CalculationsUtil.getTwoDigitRoundUpValue(baseDose * bsa);
+        double roundedUpValue = BahmniMath.getTwoDigitRoundUpValue(baseDose * bsa);
         return new Dose(roundedUpValue, Dose.DoseUnit.mg);
     }
 

@@ -10,8 +10,6 @@ import static org.junit.Assert.assertEquals;
 
 public class WeightBasedDoseRuleTest extends BaseModuleWebContextSensitiveTest {
 
-    private WeightBasedDoseRule weightBasedDoseRule = new WeightBasedDoseRule();
-
     @Before
     public void setUp() throws Exception {
         executeDataSet("DoseRuleTestData.xml");
@@ -19,11 +17,11 @@ public class WeightBasedDoseRuleTest extends BaseModuleWebContextSensitiveTest {
 
     @Test
     public void shouldReturnCalculatedDoseBasedOnWeight() throws Exception {
-        Dose dose = weightBasedDoseRule.calculateDose("person_1055_uuid", 5.0);
+        Dose dose = WeightBasedDoseRule.calculateDose("person_1055_uuid", 5.0);
         assertEquals(400, dose.getValue(), 0.0);
         assertEquals(Dose.DoseUnit.mg, dose.getDoseUnit());
 
-        dose = weightBasedDoseRule.calculateDose("person_1055_uuid", 10.0);
+        dose = WeightBasedDoseRule.calculateDose("person_1055_uuid", 10.0);
         assertEquals(800, dose.getValue(), 0.0);
         assertEquals(Dose.DoseUnit.mg, dose.getDoseUnit());
     }

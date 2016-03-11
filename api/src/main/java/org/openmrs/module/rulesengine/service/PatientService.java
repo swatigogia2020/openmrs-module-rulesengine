@@ -5,7 +5,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 
 public class PatientService {
-    public Patient getPatientByUuid(String patientUuid) {
+    public static Patient getPatientByUuid(String patientUuid) {
         Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
         if(null == patient){
             throw new APIException("Patient not found");

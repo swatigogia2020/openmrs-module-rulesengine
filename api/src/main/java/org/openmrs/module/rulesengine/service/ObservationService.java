@@ -12,9 +12,7 @@ import java.util.List;
 
 public class ObservationService {
 
-    private EncounterService encounterService = new EncounterService();
-
-    public Double getLatestWeight(Patient patient) throws Exception {
+    public static Double getLatestWeight(Patient patient) throws Exception {
         Obs observation = getLatestObservation(patient, CIELDictionary.WEIGHT_UUID);
         if(null == observation){
             throw new APIException("Weight is not available");
@@ -22,7 +20,7 @@ public class ObservationService {
         return observation.getValueNumeric();
     }
 
-    public Double getLatestHeight(Patient patient) throws Exception {
+    public static Double getLatestHeight(Patient patient) throws Exception {
         Obs observation = getLatestObservation(patient, CIELDictionary.HEIGHT_UUID);
         if(null == observation){
             throw new APIException("Height is not available");
@@ -30,10 +28,10 @@ public class ObservationService {
         return observation.getValueNumeric();
     }
 
-    private Obs getLatestObservation(Patient patient, String conceptUuid) throws Exception {
+    private static Obs getLatestObservation(Patient patient, String conceptUuid) throws Exception {
         ObsService obsService = Context.getObsService();
         Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
-        Encounter selectedEncounter = encounterService.getLatestEncounterByPatient(patient);
+        Encounter selectedEncounter = EncounterService.getLatestEncounterByPatient(patient);
 
         List<Obs> observations = obsService.getObservations(Arrays.asList(patient.getPerson()), Arrays.asList(selectedEncounter), Arrays.asList(concept),
             null, null, null, null, null, null, null, null, false);

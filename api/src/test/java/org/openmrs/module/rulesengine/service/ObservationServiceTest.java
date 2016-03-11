@@ -1,8 +1,11 @@
 package org.openmrs.module.rulesengine.service;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
@@ -10,7 +13,8 @@ import static org.junit.Assert.assertEquals;
 
 public class ObservationServiceTest extends BaseModuleWebContextSensitiveTest {
 
-    private ObservationService observationService = new ObservationService();
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -18,42 +22,32 @@ public class ObservationServiceTest extends BaseModuleWebContextSensitiveTest {
     }
 
     @Test
-    public void shouldThrowExceptionHeightNotAvailableWhenHeightObsDoesNotExist() {
-        Double height;
-        try {
-            Patient patient = Context.getPatientService().getPatientByUuid("person_1031_uuid");
-            height = observationService.getLatestHeight(patient);
-        } catch (Exception e) {
-            height = null;
-            assertEquals("Height is not available", e.getMessage());
-        }
-        assertEquals(height, null);
+    public void shouldThrowExceptionHeightNotAvailableWhenHeightObsDoesNotExist() throws Exception {
+        expectedException.expect(APIException.class);
+        expectedException.expectMessage("Height is not available");
+        Patient patient = Context.getPatientService().getPatientByUuid("person_1031_uuid");
+        ObservationService.getLatestHeight(patient);
     }
 
     @Test
     public void shouldReturnHeightOfThePatient() throws Exception {
         Patient patient = Context.getPatientService().getPatientByUuid("person_1055_uuid");
-        Double latestHeight = observationService.getLatestHeight(patient);
+        Double latestHeight = ObservationService.getLatestHeight(patient);
         assertEquals(170.0, latestHeight, 0.0);
     }
 
     @Test
-    public void shouldThrowExceptionWeightNotAvailableWhenWeightObsDoesNotExist() {
-        Double weight;
-        try {
-            Patient patient = Context.getPatientService().getPatientByUuid("person_1032_uuid");
-            weight = observationService.getLatestWeight(patient);
-        } catch (Exception e) {
-            weight = null;
-            assertEquals("Weight is not available", e.getMessage());
-        }
-        assertEquals(weight, null);
+    public void shouldThrowExceptionWeightNotAvailableWhenWeightObsDoesNotExist() throws Exception {
+        expectedException.expect(APIException.class);
+        expectedException.expectMessage("Weight is not available");
+        Patient patient = Context.getPatientService().getPatientByUuid("person_1032_uuid");
+        ObservationService.getLatestWeight(patient);
     }
 
     @Test
     public void shouldReturnWeightOfThePatient() throws Exception {
         Patient patient = Context.getPatientService().getPatientByUuid("person_1055_uuid");
-        Double latestWeight = observationService.getLatestWeight(patient);
+        Double latestWeight = ObservationService.getLatestWeight(patient);
         assertEquals(80.0, latestWeight, 0.0);
     }
 
