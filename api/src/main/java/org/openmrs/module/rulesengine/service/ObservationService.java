@@ -1,10 +1,7 @@
 package org.openmrs.module.rulesengine.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.openmrs.Concept;
-import org.openmrs.Encounter;
-import org.openmrs.Obs;
-import org.openmrs.Person;
+import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
@@ -14,37 +11,36 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ObservationService {
-    public Double getLatestWeight(Person person, Encounter selectedEncounter) throws Exception {
-        try {
-            return getLatestObservation(person, selectedEncounter, CIELDictionary.WEIGHT_UUID);
-        } catch (ObservationNotFoundException e) {
+
+    private EncounterService encounterService = new EncounterService();
+
+    public Double getLatestWeight(Patient patient) throws Exception {
+        Obs observation = getLatestObservation(patient, CIELDictionary.WEIGHT_UUID);
+        if(null == observation){
             throw new APIException("Weight is not available");
         }
+        return observation.getValueNumeric();
     }
 
-    public Double getLatestHeight(Person person, Encounter selectedEncounter) throws Exception {
-        try {
-            return getLatestObservation(person, selectedEncounter, CIELDictionary.HEIGHT_UUID);
-        } catch (ObservationNotFoundException e) {
+    public Double getLatestHeight(Patient patient) throws Exception {
+        Obs observation = getLatestObservation(patient, CIELDictionary.HEIGHT_UUID);
+        if(null == observation){
             throw new APIException("Height is not available");
         }
+        return observation.getValueNumeric();
     }
 
-    public Double getLatestObservation(Person person, Encounter selectedEncounter, String conceptUuid) throws Exception {
+    private Obs getLatestObservation(Patient patient, String conceptUuid) throws Exception {
         ObsService obsService = Context.getObsService();
         Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
+        Encounter selectedEncounter = encounterService.getLatestEncounterByPatient(patient);
 
-        List<Obs> obss = obsService.getObservations(Arrays.asList(person), Arrays.asList(selectedEncounter), Arrays.asList(concept),
+        List<Obs> observations = obsService.getObservations(Arrays.asList(patient.getPerson()), Arrays.asList(selectedEncounter), Arrays.asList(concept),
             null, null, null, null, null, null, null, null, false);
-        if(CollectionUtils.isEmpty(obss)){
-            throw new ObservationNotFoundException();
+        if(CollectionUtils.isEmpty(observations)){
+            return null;
         }
-        return obss.get(0).getValueNumeric();
+        return observations.get(0);
     }
 
-    public class ObservationNotFoundException extends Exception{
-        public ObservationNotFoundException() {
-            super("No Observation found.");
-        }
-    }
 }

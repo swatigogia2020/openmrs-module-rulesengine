@@ -1,4 +1,4 @@
-package org.openmrs.module.rulesengine;
+package org.openmrs.module.rulesengine.rule;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,14 +18,13 @@ public class WeightBasedDoseRuleTest extends BaseModuleWebContextSensitiveTest {
     }
 
     @Test
-    public void shouldThrowExceptionWeightNotAvailableWhenWeightObsDoesNotExist() {
-        Dose calculatedDose;
-        try {
-            calculatedDose = weightBasedDoseRule.calculateDose("person_1032_uuid", 5.0);
-        } catch (Exception e) {
-            calculatedDose = null;
-            assertEquals(e.getMessage(), "Weight is not available");
-        }
-        assertEquals(calculatedDose, null);
+    public void shouldReturnCalculatedDoseBasedOnWeight() throws Exception {
+        Dose dose = weightBasedDoseRule.calculateDose("person_1055_uuid", 5.0);
+        assertEquals(400, dose.getValue(), 0.0);
+        assertEquals(Dose.DoseUnit.mg, dose.getDoseUnit());
+
+        dose = weightBasedDoseRule.calculateDose("person_1055_uuid", 10.0);
+        assertEquals(800, dose.getValue(), 0.0);
+        assertEquals(Dose.DoseUnit.mg, dose.getDoseUnit());
     }
 }

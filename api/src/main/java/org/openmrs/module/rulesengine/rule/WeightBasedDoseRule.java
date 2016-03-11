@@ -1,23 +1,20 @@
 package org.openmrs.module.rulesengine.rule;
 
-import org.openmrs.Encounter;
 import org.openmrs.Patient;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.rulesengine.domain.Dose;
-import org.openmrs.module.rulesengine.service.EncounterService;
 import org.openmrs.module.rulesengine.service.ObservationService;
+import org.openmrs.module.rulesengine.service.PatientService;
 import org.openmrs.module.rulesengine.util.CalculationsUtil;
 
 public class WeightBasedDoseRule {
 
     private final ObservationService observationService = new ObservationService();
-    private final EncounterService encounterService = new EncounterService();
+    private final PatientService patientService = new PatientService();
 
     public Dose calculateDose(String patientUuid, Double baseDose) throws Exception {
-        Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
-        Encounter selectedEncounter = encounterService.getLatestEncounterByPatient(patient);
+        Patient patient = patientService.getPatientByUuid(patientUuid);
 
-        Double weight = observationService.getLatestWeight(patient, selectedEncounter);
+        Double weight = observationService.getLatestWeight(patient);
 
         double roundedUpDoseValue = CalculationsUtil.getTwoDigitRoundUpValue(baseDose * weight);
         return new Dose(roundedUpDoseValue, Dose.DoseUnit.mg);
