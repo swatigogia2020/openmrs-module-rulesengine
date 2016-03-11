@@ -6,8 +6,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.rulesengine.domain.Dose;
 import org.openmrs.module.rulesengine.service.EncounterService;
 import org.openmrs.module.rulesengine.service.ObservationService;
-
-import java.math.BigDecimal;
+import org.openmrs.module.rulesengine.util.CalculationsUtil;
 
 public class WeightBasedDoseRule {
 
@@ -20,7 +19,7 @@ public class WeightBasedDoseRule {
 
         Double weight = observationService.getLatestWeight(patient, selectedEncounter);
 
-        double roundedUpDoseValue = new BigDecimal(weight * baseDose).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        double roundedUpDoseValue = CalculationsUtil.getTwoDigitRoundUpValue(baseDose * weight);
         return new Dose(roundedUpDoseValue, Dose.DoseUnit.mg);
     }
 
