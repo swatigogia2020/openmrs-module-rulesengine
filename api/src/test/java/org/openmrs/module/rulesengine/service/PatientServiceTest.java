@@ -17,7 +17,7 @@ public class PatientServiceTest extends BaseModuleWebContextSensitiveTest {
 
     @Before
     public void setUp() throws Exception {
-        executeDataSet("DoseRuleTestData.xml");
+        executeDataSet("doseRuleTestData.xml");
     }
 
     @Test
