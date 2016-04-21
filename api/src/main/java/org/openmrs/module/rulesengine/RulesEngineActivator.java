@@ -4,6 +4,7 @@ package org.openmrs.module.rulesengine;
 import org.apache.commons.logging.Log; 
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.rulesengine.util.RulesEngineProperties;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -38,6 +39,7 @@ public class RulesEngineActivator implements ModuleActivator {
 	 */
 	public void started() {
 		log.info("Rules Engine Module started");
+		RulesEngineProperties.load();
 	}
 	
 	/**

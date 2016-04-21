@@ -28,8 +28,8 @@ public class BSABasedDoseRule {
         Date asOfDate = selectedEncounter.getEncounterDatetime();
         Integer ageInYears = BahmniMath.ageInYears(patient.getBirthdate(), asOfDate);
 
-        Double height = ObservationService.getLatestHeight(patient);
-        Double weight = ObservationService.getLatestWeight(patient);
+        Double height = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT);
+        Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
         Double bsa = calculateBSA(height, weight, ageInYears);
 
         double roundedUpValue = BahmniMath.getTwoDigitRoundUpValue(baseDose * bsa);

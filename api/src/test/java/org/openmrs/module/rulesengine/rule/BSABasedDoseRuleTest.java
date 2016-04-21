@@ -3,15 +3,22 @@ package org.openmrs.module.rulesengine.rule;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.rulesengine.domain.Dose;
+import org.openmrs.module.rulesengine.util.RulesEngineProperties;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
+
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
 
 public class BSABasedDoseRuleTest extends BaseModuleWebContextSensitiveTest {
 
+    private Properties properties;
+
     @Before
     public void setUp() throws Exception {
+        properties = new Properties();
+        RulesEngineProperties.initialize(properties);
         executeDataSet("doseRuleTestData.xml");
     }
 

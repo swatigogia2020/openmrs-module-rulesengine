@@ -11,7 +11,7 @@ public class WeightBasedDoseRule {
     public static Dose calculateDose(String patientUuid, Double baseDose) throws Exception {
         Patient patient = PatientService.getPatientByUuid(patientUuid);
 
-        Double weight = ObservationService.getLatestWeight(patient);
+        Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
 
         double roundedUpDoseValue = BahmniMath.getTwoDigitRoundUpValue(baseDose * weight);
         return new Dose(roundedUpDoseValue, Dose.DoseUnit.mg);
