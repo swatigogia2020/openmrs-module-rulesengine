@@ -2,13 +2,12 @@ package org.openmrs.module.rulesengine.rule;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.module.rulesengine.RulesEngineBaseIT;
 import org.openmrs.module.rulesengine.domain.Dose;
-import org.openmrs.module.rulesengine.rule.WeightBasedDoseRule;
-import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
 import static org.junit.Assert.assertEquals;
 
-public class WeightBasedDoseRuleTest extends BaseModuleWebContextSensitiveTest {
+public class WeightBasedDoseRuleTest extends RulesEngineBaseIT {
 
     @Before
     public void setUp() throws Exception {

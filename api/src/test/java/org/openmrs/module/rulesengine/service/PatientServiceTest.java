@@ -6,11 +6,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
-import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
+import org.openmrs.module.rulesengine.RulesEngineBaseIT;
 
 import static org.junit.Assert.assertEquals;
 
-public class PatientServiceTest extends BaseModuleWebContextSensitiveTest {
+public class PatientServiceTest extends RulesEngineBaseIT {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
