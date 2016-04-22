@@ -16,6 +16,7 @@ public class RulesEngineProperties {
     private static Properties properties;
 
     public static void load () {
+        properties = new Properties(System.getProperties());
         File file = new File(OpenmrsUtil.getApplicationDataDirectory(), RULES_ENGINE_PROP_FILE);
         if (!(file.exists() && file.canRead())) {
             log.warn(RULES_ENGINE_PROP_FILE + " does not exist or not readable.");
@@ -25,7 +26,6 @@ public class RulesEngineProperties {
         String propertyFile = file.getAbsolutePath();
         log.info(String.format("Reading bahmni properties from : %s", propertyFile));
         try {
-            properties = new Properties(System.getProperties());
             properties.load(new FileInputStream(propertyFile));
         } catch (IOException e) {
             throw new RuntimeException(e);
