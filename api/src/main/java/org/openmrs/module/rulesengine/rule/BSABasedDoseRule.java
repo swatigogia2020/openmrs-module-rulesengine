@@ -7,10 +7,12 @@ import org.openmrs.module.rulesengine.service.EncounterService;
 import org.openmrs.module.rulesengine.service.ObservationService;
 import org.openmrs.module.rulesengine.service.PatientService;
 import org.openmrs.module.rulesengine.util.BahmniMath;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-public class BSABasedDoseRule {
+@Component("mg/m2")
+public class BSABasedDoseRule implements DoseRule {
 
     public static Double calculateBSA(Double height, Double weight, Integer patientAgeInYears) {
         if (patientAgeInYears <= 15 && weight <= 40) {
@@ -19,7 +21,7 @@ public class BSABasedDoseRule {
         return Math.pow(weight, 0.425) * Math.pow(height, 0.725) * 0.007184;
     }
 
-    public static Dose calculateDose(String patientUuid, Double baseDose) throws Exception {
+    public Dose calculateDose(String drugName, String patientUuid, Double baseDose, String doseUnit, String orderSetName) throws Exception {
 
         Patient patient = PatientService.getPatientByUuid(patientUuid);
 
@@ -33,7 +35,7 @@ public class BSABasedDoseRule {
         Double bsa = calculateBSA(height, weight, ageInYears);
 
         double roundedUpValue = BahmniMath.getTwoDigitRoundUpValue(baseDose * bsa);
-        return new Dose(roundedUpValue, Dose.DoseUnit.mg);
+        return new Dose(drugName,roundedUpValue, Dose.DoseUnit.mg);
     }
 
 }

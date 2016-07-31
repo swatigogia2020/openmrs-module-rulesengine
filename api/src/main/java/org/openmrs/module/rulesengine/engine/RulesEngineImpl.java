@@ -1,9 +1,9 @@
 package org.openmrs.module.rulesengine.engine;
 
-import org.bahmni.csv.MultiStageMigrator;
-import org.bahmni.module.admin.csv.models.OrderSetDrugRow;
 import org.openmrs.module.rulesengine.domain.Dose;
+import org.openmrs.module.rulesengine.rule.DoseRule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,11 +13,12 @@ import org.springframework.stereotype.Component;
 public class RulesEngineImpl implements RulesEngine {
 
     @Autowired
-    MultiStageMigrator<OrderSetDrugRow> multiStageMigrator;
+    private ApplicationContext applicationContext;
 
     @Override
-    public Dose calculateDose(String patientUUId, String drugName, String baseUnit, Double doseUnit, String orderSetName) throws Exception {
-        return null;
+    public Dose calculateDose(String patientUUId, String drugName, Double baseDose, String doseUnit, String orderSetName) throws Exception {
+        DoseRule rule= applicationContext.getBean(doseUnit,DoseRule.class);
+        return rule.calculateDose(drugName, patientUUId, baseDose,doseUnit, orderSetName);
     }
 
 }
