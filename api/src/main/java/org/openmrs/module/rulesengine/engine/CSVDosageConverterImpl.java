@@ -17,11 +17,10 @@ public class CSVDosageConverterImpl implements DosageConverter {
     @Autowired
     private CSVFileReader<OrderSetDrugRow> csvFileReader;
 
-    private String csvBaseFilePath = "./";
+    private String csvBaseFilePath = "/opt/bahmni-web/etc/";
 
     public CSVDosageConverterImpl() {
-        csvBaseFilePath = OpenmrsUtil.getApplicationDataDirectory() +
-                File.separator + "bahmni_config" +
+        csvBaseFilePath = csvBaseFilePath + "bahmni_config" +
                 File.separator + "openmrs" +
                 File.separator + "drugOrderRules";
     }
