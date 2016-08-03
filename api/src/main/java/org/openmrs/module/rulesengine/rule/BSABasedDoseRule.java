@@ -2,6 +2,7 @@ package org.openmrs.module.rulesengine.rule;
 
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
+import org.openmrs.module.rulesengine.domain.DosageRequest;
 import org.openmrs.module.rulesengine.domain.Dose;
 import org.openmrs.module.rulesengine.service.EncounterService;
 import org.openmrs.module.rulesengine.service.ObservationService;
@@ -21,9 +22,9 @@ public class BSABasedDoseRule implements DoseRule {
         return Math.pow(weight, 0.425) * Math.pow(height, 0.725) * 0.007184;
     }
 
-    public Dose calculateDose(String drugName, String patientUuid, Double baseDose, String doseUnit, String orderSetName) throws Exception {
+    public Dose calculateDose(DosageRequest request) throws Exception {
 
-        Patient patient = PatientService.getPatientByUuid(patientUuid);
+        Patient patient = PatientService.getPatientByUuid(request.getPatientUuid());
 
         Encounter selectedEncounter = EncounterService.getLatestEncounterByPatient(patient);
 
@@ -34,8 +35,8 @@ public class BSABasedDoseRule implements DoseRule {
         Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
         Double bsa = calculateBSA(height, weight, ageInYears);
 
-        double roundedUpValue = BahmniMath.getTwoDigitRoundUpValue(baseDose * bsa);
-        return new Dose(drugName,roundedUpValue, Dose.DoseUnit.mg);
+        double roundedUpValue = BahmniMath.getTwoDigitRoundUpValue(request.getBaseDose() * bsa);
+        return new Dose(request.getDrugName(),roundedUpValue, Dose.DoseUnit.mg);
     }
 
 }

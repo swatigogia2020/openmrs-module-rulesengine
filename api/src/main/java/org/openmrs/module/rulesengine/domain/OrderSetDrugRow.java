@@ -11,41 +11,41 @@ public class OrderSetDrugRow extends CSVEntity {
     private String name;
 
     @CSVHeader(name = "min_weight")
-    private double minWeight;
+    private String minWeight;
 
     @CSVHeader(name = "max_weight")
-    private double maxWeight;
+    private String maxWeight;
 
     @CSVHeader(name = "min_age")
-    private int minAge;
+    private String minAge;
 
     @CSVHeader(name = "max_age")
-    private int maxAge;
+    private String maxAge;
 
     @CSVHeader(name = "dosage")
-    private int dosage;
+    private String dosage;
 
     public String getName() {
         return name;
     }
 
-    public double getMinWeight() {
+    public String getMinWeight() {
         return minWeight;
     }
 
-    public double getMaxWeight() {
+    public String getMaxWeight() {
         return maxWeight;
     }
 
-    public int getMinAge() {
+    public String getMinAge() {
         return minAge;
     }
 
-    public int getMaxAge() {
+    public String getMaxAge() {
         return maxAge;
     }
 
-    public int getDosage() {
+    public String getDosage() {
         return dosage;
     }
 
@@ -54,11 +54,11 @@ public class OrderSetDrugRow extends CSVEntity {
 
     public OrderSetDrugRow(String name, int minAge, int maxAge, double minWeight, double maxWeight, int dosage) {
         this.name = name;
-        this.minWeight = minWeight;
-        this.maxWeight = maxWeight;
-        this.minAge = minAge;
-        this.maxAge = maxAge;
-        this.dosage = dosage;
+        this.minWeight = String.valueOf(minWeight);
+        this.maxWeight = String.valueOf(maxWeight);
+        this.minAge = String.valueOf(minAge);
+        this.maxAge = String.valueOf(maxAge);
+        this.dosage = String.valueOf(dosage);
     }
 
     @Override

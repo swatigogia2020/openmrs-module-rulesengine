@@ -1,6 +1,7 @@
 package org.openmrs.module.rulesengine.rule;
 
 import org.openmrs.Patient;
+import org.openmrs.module.rulesengine.domain.DosageRequest;
 import org.openmrs.module.rulesengine.domain.Dose;
 import org.openmrs.module.rulesengine.engine.DosageConverter;
 import org.openmrs.module.rulesengine.service.ObservationService;
@@ -14,12 +15,12 @@ public class WeightBasedDoseRule implements DoseRule {
     @Autowired
     private DosageConverter dosageConverter;
 
-    public Dose calculateDose(String drugName, String patientUuid, Double baseDose, String doseUnit, String orderSetName) throws Exception {
-        Patient patient = PatientService.getPatientByUuid(patientUuid);
+    public Dose calculateDose(DosageRequest request) throws Exception {
+        Patient patient = PatientService.getPatientByUuid(request.getPatientUuid());
 
         Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
 
-        return dosageConverter.convertDosageByPatient(drugName, patient.getAge(), weight, baseDose, orderSetName);
+        return dosageConverter.convertDosageByPatient(request.getDrugName(), patient.getAge(), weight, request.getBaseDose(), request.getOrderSetName());
 
     }
 
