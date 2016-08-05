@@ -6,6 +6,7 @@ public class DosageRequest {
     private double baseDose;
     private String doseUnit;
     private String orderSetName;
+    private String dosingRule;
 
     public DosageRequest() {
     }
@@ -57,4 +58,8 @@ public class DosageRequest {
     public void setOrderSetName(String orderSetName) {
         this.orderSetName = orderSetName;
     }
+
+    public String getDosingRule() { return dosingRule; }
+
+    public void setDosingRule(String dosingRule) { this.dosingRule = dosingRule; }
 }

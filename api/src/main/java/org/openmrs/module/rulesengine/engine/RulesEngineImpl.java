@@ -15,7 +15,7 @@ public class RulesEngineImpl implements RulesEngine {
 
     @Override
     public Dose calculateDose(DosageRequest request) throws Exception {
-        DoseRule rule= applicationContext.getBean(request.getDoseUnit(),DoseRule.class);
+        DoseRule rule= applicationContext.getBean(request.getDosingRule(),DoseRule.class);
         return rule.calculateDose(request);
     }
 
