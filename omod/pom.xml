@@ -15,6 +15,21 @@
 
 	<dependencies>
 
+
+		<dependency>
+			<groupId>org.bahmni.module</groupId>
+			<artifactId>bahmni-migrator</artifactId>
+			<version>0.84-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.0</version>
+			<type>jar</type>
+		</dependency>
+
 		<!-- 
 		Add other dependencies from parent's pom: 
 		<dependency> 
@@ -24,7 +39,7 @@
 		-->
 		
 		<!-- Begin OpenMRS modules -->
-		
+
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>${project.parent.artifactId}-api</artifactId>

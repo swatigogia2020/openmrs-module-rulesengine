@@ -3,8 +3,10 @@ package org.openmrs.module.rulesengine.domain;
 public class Dose {
     private double value;
     private DoseUnit doseUnit;
+    private String drugName;
 
-    public Dose(double value, DoseUnit doseUnit) {
+    public Dose(String drugName, double value, DoseUnit doseUnit) {
+        this.drugName=drugName;
         this.value = value;
         this.doseUnit = doseUnit;
     }
@@ -19,5 +21,9 @@ public class Dose {
 
     public enum DoseUnit {
         mg
+    }
+
+    public String getDrugName() {
+        return drugName;
     }
 }
