@@ -1,6 +1,8 @@
 package org.openmrs.module.rulesengine.rule;
 
 import org.bahmni.csv.CSVFile;
+import org.openmrs.module.rulesengine.engine.RulesEngine;
+import org.openmrs.module.rulesengine.engine.RulesEngineImpl;
 import org.openmrs.module.rulesengine.util.CSVReader;
 import org.bahmni.csv.exception.MigrationException;
 import org.junit.Before;
@@ -34,15 +36,15 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 @PrepareForTest({PatientService.class, ObservationService.class})
 public class CSVDosageConverterImplTest {
 
-    @InjectMocks
     CSVBasedDosageRule csvBasedDosageRule;
-
-    ApplicationContext applicationContext;
 
     @Mock
     Patient patient;
 
     CSVReader<OrderSetDrugRow> csvReader;
+
+    @Mock
+    private RulesEngine rulesEngine;
 
     private String csvFileName = "testcsvfile";
 
@@ -51,8 +53,7 @@ public class CSVDosageConverterImplTest {
     @Before
     public void setUp() throws Exception {
         csvReader = mock(CSVReader.class);
-        applicationContext= mock(ApplicationContext.class);
-        csvBasedDosageRule = new CSVBasedDosageRule(csvReader,applicationContext);
+        csvBasedDosageRule = new CSVBasedDosageRule(csvReader,new RulesEngineImpl());
         mockStatic(PatientService.class);
         mockStatic(ObservationService.class);
 
@@ -109,7 +110,7 @@ public class CSVDosageConverterImplTest {
         drugRows.add(new OrderSetDrugRow("drug1", 13, 200, 20.0, 60, 10,"mg/kg"));
         DosageRule dosageRule=mock(WeightBasedDosageRule.class);
         when(dosageRule.calculateDose(any(DosageRequest.class))).thenReturn(new Dose("drug1",500, Dose.DoseUnit.mg));
-        when(applicationContext.getBean("mg/kg", DosageRule.class)).thenReturn(dosageRule);
+        when(rulesEngine.getRuleObject("mg/kg")).thenReturn(dosageRule);
         when(csvReader
                 .readCsvFileToMemory(any(CSVFile.class), Matchers.<Class<OrderSetDrugRow>>any()))
                 .thenReturn(drugRows);
@@ -126,7 +127,7 @@ public class CSVDosageConverterImplTest {
         drugRows.add(new OrderSetDrugRow("drug1", 13, 200, 20.0, 60, 10, "notdefined"));
         DosageRule dosageRule = mock(WeightBasedDosageRule.class);
         when(dosageRule.calculateDose(any(DosageRequest.class))).thenReturn(new Dose("drug1", 500, Dose.DoseUnit.mg));
-        when(applicationContext.getBean("notdefined", DosageRule.class)).thenThrow(new Exception("bean not defined"));
+        when(rulesEngine.getRuleObject("notdefined")).thenThrow(new Exception("bean not defined"));
         when(csvReader
                 .readCsvFileToMemory(any(CSVFile.class), Matchers.<Class<OrderSetDrugRow>>any()))
                 .thenReturn(drugRows);

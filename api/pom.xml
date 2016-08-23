@@ -29,6 +29,20 @@
             <type>jar</type>
         </dependency>
 
+        <dependency>
+            <groupId>org.bahmni.module</groupId>
+            <artifactId>bahmni-extension</artifactId>
+            <version>0.84-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.9</version>
+            <type>jar</type>
+        </dependency>
+
         <!--
         Add other dependencies from parent's pom:
         <dependency>

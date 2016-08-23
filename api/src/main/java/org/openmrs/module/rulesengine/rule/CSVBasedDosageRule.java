@@ -3,6 +3,9 @@ package org.openmrs.module.rulesengine.rule;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bahmni.csv.CSVFile;
+import org.openmrs.module.rulesengine.domain.RuleName;
+import org.openmrs.module.rulesengine.engine.RulesEngine;
+import org.openmrs.module.rulesengine.engine.RulesEngineImpl;
 import org.openmrs.module.rulesengine.util.CSVReader;
 import org.openmrs.Patient;
 import org.openmrs.module.rulesengine.domain.DosageRequest;
@@ -19,26 +22,25 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.List;
 
-@Component("customrule")
+@RuleName(name = "customrule")
 public class CSVBasedDosageRule implements DosageRule {
 
     private CSVReader<OrderSetDrugRow> csvReader;
 
+    private RulesEngine rulesEngine;
+
     private static final String CSVFileRelativePath = "rulesengine"+File.separator+"drugorderrules";
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
 
     public CSVBasedDosageRule() {
         csvReader = new CSVReader<>();
+        rulesEngine=new RulesEngineImpl();
     }
 
     private static Log log = LogFactory.getLog(CSVBasedDosageRule.class);
 
-    public CSVBasedDosageRule(CSVReader<OrderSetDrugRow> csvReader, ApplicationContext applicationContext) {
+    public CSVBasedDosageRule(CSVReader<OrderSetDrugRow> csvReader, RulesEngine rulesEngine) {
         this.csvReader = csvReader;
-        this.applicationContext=applicationContext;
+        this.rulesEngine=rulesEngine;
     }
 
     @Override
@@ -62,7 +64,7 @@ public class CSVBasedDosageRule implements DosageRule {
                             double roundedUpDoseValue = Double.parseDouble(orderSetDrugRow.getDosage());
                             return new Dose(orderSetDrugRow.getName(), roundedUpDoseValue, Dose.DoseUnit.mg);
                         }
-                        DosageRule rule = applicationContext.getBean(orderSetDrugRow.getRule(), DosageRule.class);
+                        DosageRule rule = rulesEngine.getRuleObject(orderSetDrugRow.getRule());
                         request.setBaseDose(Double.parseDouble(orderSetDrugRow.getDosage()));
                         return rule.calculateDose(request);
                     }
@@ -70,9 +72,10 @@ public class CSVBasedDosageRule implements DosageRule {
             }
         }
 
-        log.warn("Returning original dosage without conversion");
-        throw new Exception("Drug definition not found in CSV file for:"+request.getDrugName());
+        log.error("Dosage definition not found in CSV file for '"+request.getDrugName()+"'");
+        throw new Exception("Dosage definition not found in CSV file for '"+request.getDrugName()+"'");
     }
+
     private String getCSVFilePath(String relativePath) {
         return OpenmrsUtil.getApplicationDataDirectory()+File.separator+
                 "bahmni_config"+File.separator+"openmrs"+File.separator+relativePath;

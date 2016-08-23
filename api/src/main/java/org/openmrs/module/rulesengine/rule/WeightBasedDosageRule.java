@@ -3,12 +3,13 @@ package org.openmrs.module.rulesengine.rule;
 import org.openmrs.Patient;
 import org.openmrs.module.rulesengine.domain.DosageRequest;
 import org.openmrs.module.rulesengine.domain.Dose;
+import org.openmrs.module.rulesengine.domain.RuleName;
 import org.openmrs.module.rulesengine.service.ObservationService;
 import org.openmrs.module.rulesengine.service.PatientService;
 import org.openmrs.module.rulesengine.util.BahmniMath;
 import org.springframework.stereotype.Component;
 
-@Component("mg/kg")
+@RuleName(name = "mg/kg")
 public class WeightBasedDosageRule implements DosageRule {
 
     public Dose calculateDose(DosageRequest request) throws Exception {

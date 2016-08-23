@@ -4,6 +4,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.module.rulesengine.domain.DosageRequest;
 import org.openmrs.module.rulesengine.domain.Dose;
+import org.openmrs.module.rulesengine.domain.RuleName;
 import org.openmrs.module.rulesengine.service.EncounterService;
 import org.openmrs.module.rulesengine.service.ObservationService;
 import org.openmrs.module.rulesengine.service.PatientService;
@@ -12,10 +13,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Component("mg/m2")
+@RuleName(name = "mg/m2")
 public class BSABasedDosageRule implements DosageRule {
 
-    public static Double calculateBSA(Double height, Double weight, Integer patientAgeInYears) {
+    public static Double calculateBSA(Double height, Double weight, Integer patientAgeInYears) throws Exception {
         if (patientAgeInYears <= 15 && weight <= 40) {
             return Math.sqrt(weight * height / 3600);
         }
