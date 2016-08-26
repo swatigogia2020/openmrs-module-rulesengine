@@ -45,10 +45,15 @@ public class ObservationService {
         if (concept == null) {
             throw new APIException(String.format("Concept [%s] is not configured in rules.", name));
         }
-        Encounter selectedEncounter = EncounterService.getLatestEncounterByPatient(patient);
+        List<Obs> observations = null;
+        try {
+            Encounter selectedEncounter = EncounterService.getLatestEncounterByPatient(patient);
 
-        List<Obs> observations = obsService.getObservations(Arrays.asList(patient.getPerson()), Arrays.asList(selectedEncounter), Arrays.asList(concept),
-            null, null, null, null, null, null, null, null, false);
+            observations = obsService.getObservations(Arrays.asList(patient.getPerson()), Arrays.asList(selectedEncounter), Arrays.asList(concept),
+                    null, null, null, null, null, null, null, null, false);
+        } catch (Exception e) {
+            throw new Exception(String.format("Please capture Height and/or weight for current visit. %s.", e.getMessage()));
+        }
         if (CollectionUtils.isEmpty(observations)) {
             return null;
         }

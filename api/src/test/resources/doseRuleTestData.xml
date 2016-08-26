@@ -82,4 +82,11 @@
     <obs obs_id="107" concept_id="5089" person_id="1055" encounter_id="1055" value_numeric="80" obs_datetime="2008-08-19 05:05:05.2"
          date_created="2008-08-19 15:09:05.0" uuid="obs_107_uuid" creator="1" voided="0" />
 
+    <person person_id="1034" gender="M" dead="false" creator="1" birthdate_estimated="0" birthdate="1970-04-21" date_created="2008-08-16 15:57:09.0"
+            voided="false" void_reason="For test purposes" uuid="person_1034_uuid"/>
+    <patient patient_id="1034" creator="1" date_created="2005-09-23 00:00:00.0" changed_by="1" date_changed="2008-08-19 12:29:59.0"
+             voided="false" void_reason=""/>
+    <person_name person_name_id="1034" preferred="true" person_id="1034" prefix="Mr." given_name="Ranga" middle_name="Test"
+                 family_name="Banka" family_name_suffix="Esq." creator="1" date_created="2005-09-23 00:00:00.0" voided="false"
+                 void_reason="" uuid="person_name_uuid_1034"/>
 </dataset>
