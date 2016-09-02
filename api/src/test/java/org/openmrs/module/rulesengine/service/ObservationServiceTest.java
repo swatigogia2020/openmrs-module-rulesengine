@@ -54,7 +54,7 @@ public class ObservationServiceTest extends RulesEngineBaseIT {
     @Test
     public void shouldThrowExceptionWhenEncounterIsNotFound() throws Exception {
         expectedException.expect(Exception.class);
-        expectedException.expectMessage("Please capture Height and/or weight for current visit. No Encounter found.");
+        expectedException.expectMessage("Please capture Height and/or weight for current visit.");
         Patient patient = Context.getPatientService().getPatientByUuid("person_1034_uuid");
         ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
     }
