@@ -65,6 +65,10 @@ public class CSVBasedDosageRule implements DosageRule {
                             return new Dose(orderSetDrugRow.getName(), roundedUpDoseValue, Dose.DoseUnit.mg);
                         }
                         DosageRule rule = rulesEngine.getRuleObject(orderSetDrugRow.getRule());
+                        if(rule==null) {
+                            log.error("Rule implementation not found for " + orderSetDrugRow.getRule());
+                            throw new Exception("Rule implementation not found for " + orderSetDrugRow.getRule());
+                        }
                         request.setBaseDose(Double.parseDouble(orderSetDrugRow.getDosage()));
                         return rule.calculateDose(request);
                     }

@@ -127,11 +127,12 @@ public class CSVDosageConverterImplTest {
         drugRows.add(new OrderSetDrugRow("drug1", 13, 200, 20.0, 60, 10, "notdefined"));
         DosageRule dosageRule = mock(WeightBasedDosageRule.class);
         when(dosageRule.calculateDose(any(DosageRequest.class))).thenReturn(new Dose("drug1", 500, Dose.DoseUnit.mg));
-        when(rulesEngine.getRuleObject("notdefined")).thenThrow(new Exception("bean not defined"));
+        when(rulesEngine.getRuleObject("notdefined")).thenReturn(null);
         when(csvReader
                 .readCsvFileToMemory(any(CSVFile.class), Matchers.<Class<OrderSetDrugRow>>any()))
                 .thenReturn(drugRows);
         DosageRequest request = new DosageRequest("drug1", "patientId", 10, "mg", "testorderset", "custom");
         csvBasedDosageRule.calculateDose(request);
     }
+
 }
