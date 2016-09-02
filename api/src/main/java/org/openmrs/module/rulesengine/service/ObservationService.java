@@ -52,7 +52,7 @@ public class ObservationService {
             observations = obsService.getObservations(Arrays.asList(patient.getPerson()), Arrays.asList(selectedEncounter), Arrays.asList(concept),
                     null, null, null, null, null, null, null, null, false);
         } catch (Exception e) {
-            throw new Exception(String.format("Please capture Height and/or weight for current visit. %s.", e.getMessage()));
+            throw new Exception(String.format("Please capture Height and/or weight for current visit."));
         }
         if (CollectionUtils.isEmpty(observations)) {
             return null;
