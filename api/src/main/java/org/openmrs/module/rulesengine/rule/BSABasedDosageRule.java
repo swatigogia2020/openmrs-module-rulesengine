@@ -27,13 +27,15 @@ public class BSABasedDosageRule implements DosageRule {
 
         Patient patient = PatientService.getPatientByUuid(request.getPatientUuid());
 
+        Double height = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT);
+        Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
+
         Encounter selectedEncounter = EncounterService.getLatestEncounterByPatient(patient);
 
         Date asOfDate = selectedEncounter.getEncounterDatetime();
         Integer ageInYears = BahmniMath.ageInYears(patient.getBirthdate(), asOfDate);
 
-        Double height = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT);
-        Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
+
         Double bsa = calculateBSA(height, weight, ageInYears);
 
         double roundedUpValue = BahmniMath.getTwoDigitRoundUpValue(request.getBaseDose() * bsa);
