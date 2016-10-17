@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>rulesengine</artifactId>
-	<version>0.86-SNAPSHOT</version>
+	<version>0.87-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Rules Engine Module</name>
 	<description>Helps to calculate dose based on dosing rules.</description>
