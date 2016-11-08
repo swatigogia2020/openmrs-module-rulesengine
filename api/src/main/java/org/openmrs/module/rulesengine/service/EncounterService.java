@@ -6,6 +6,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,8 +17,12 @@ public class EncounterService {
 
     public static Encounter getLatestEncounterByPatient(Patient patient) {
         EncounterType registration = Context.getEncounterService().getEncounterType(REGISTRATION_ENCOUNTER_TYPE);
+        EncounterSearchCriteriaBuilder encounterSearchCriteriaBuilder = new EncounterSearchCriteriaBuilder().setPatient(patient)
+                .setLocation(null).setFromDate(null).setToDate(null).setEnteredViaForms(null)
+                .setEncounterTypes(Arrays.asList(registration)).setProviders(null).setVisitTypes(null).setVisits(null)
+                .setIncludeVoided(false);
         List<Encounter> encounters = Context.getEncounterService()
-            .getEncounters(patient, null, null, null, null, Arrays.asList(registration), null, null, null, false);
+                .getEncounters(encounterSearchCriteriaBuilder.createEncounterSearchCriteria());
 
         if(CollectionUtils.isEmpty(encounters)){
             throw new APIException("No Encounter found");
