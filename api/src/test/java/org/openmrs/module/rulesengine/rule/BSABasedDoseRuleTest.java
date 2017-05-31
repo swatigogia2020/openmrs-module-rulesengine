@@ -3,11 +3,9 @@ package org.openmrs.module.rulesengine.rule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.module.rulesengine.domain.DosageRequest;
 import org.openmrs.module.rulesengine.domain.Dose;
-import org.openmrs.module.rulesengine.service.EncounterService;
 import org.openmrs.module.rulesengine.service.ObservationService;
 import org.openmrs.module.rulesengine.service.PatientService;
 import org.openmrs.module.rulesengine.util.BahmniMath;
@@ -22,14 +20,13 @@ import static org.powermock.api.mockito.PowerMockito.*;
 
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({PatientService.class, ObservationService.class, EncounterService.class, BahmniMath.class})
+@PrepareForTest({PatientService.class, ObservationService.class, BahmniMath.class})
 public class BSABasedDoseRuleTest  {
 
     @Before
     public void setUp() throws Exception {
         mockStatic(PatientService.class);
         mockStatic(ObservationService.class);
-        mockStatic(EncounterService.class);
         mockStatic(BahmniMath.class);
     }
 
@@ -42,20 +39,22 @@ public class BSABasedDoseRuleTest  {
         when(patientService.getPatientByUuid(any(String.class))).thenReturn(patient);
 
         ObservationService observationService = mock(ObservationService.class);
-        when(observationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT)).thenReturn(189.0);
-        when(observationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT)).thenReturn(69.0);
-
-        Encounter encounter = mock(Encounter.class);
-        when(encounter.getEncounterDatetime()).thenReturn(new Date());
-
-        EncounterService encounterService = mock(EncounterService.class);
-        when(encounterService.getLatestEncounterByPatient(any(Patient.class))).thenReturn(encounter);
+        when(observationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT, "visit_uuid")).thenReturn(189.0);
+        when(observationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT, "visit_uuid")).thenReturn(69.0);
 
         BahmniMath bahmniMath = mock(BahmniMath.class);
         when(bahmniMath.ageInYears(any(Date.class),any(Date.class))).thenReturn(40);
         when(bahmniMath.getTwoDigitRoundUpValue(any(Double.class))).thenReturn(150.0);
 
-        DosageRequest dosageRequest = new DosageRequest("paracetamol","person_1055_uuid", 10.0, "mg/kg","testorderset","test");
+        DosageRequest dosageRequest = new DosageRequest(
+                "paracetamol",
+                "person_1055_uuid",
+                10.0,
+                "mg/kg",
+                "testorderset",
+                "test",
+                "visit_uuid"
+        );
 
         Dose dose = new BSABasedDosageRule().calculateDose(dosageRequest);
 

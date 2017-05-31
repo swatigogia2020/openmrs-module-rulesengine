@@ -8,7 +8,6 @@ import org.bahmni.csv.exception.MigrationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.openmrs.Patient;
@@ -19,7 +18,6 @@ import org.openmrs.module.rulesengine.service.ObservationService;
 import org.openmrs.module.rulesengine.service.PatientService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +57,7 @@ public class CSVDosageConverterImplTest {
 
         when(patient.getAge()).thenReturn(20);
         when(PatientService.getPatientByUuid(anyString())).thenReturn(patient);
-        when(ObservationService.getLatestObsValueNumeric(any(Patient.class), any(ObservationService.ConceptRepo.class)))
+        when(ObservationService.getLatestObsValueNumeric(any(Patient.class), any(ObservationService.ConceptRepo.class), anyString()))
                 .thenReturn(50.0);
 
     }
@@ -70,7 +68,7 @@ public class CSVDosageConverterImplTest {
         when(csvReader
                 .readCsvFileToMemory(any(CSVFile.class), Matchers.<Class<OrderSetDrugRow>>any()))
                 .thenThrow(new MigrationException("csv file not found"));
-        DosageRequest request = new DosageRequest("test", "patientId", 10, "mg", "testorderset", "test");
+        DosageRequest request = new DosageRequest("test", "patientId", 10, "mg", "testorderset", "test", null);
         csvBasedDosageRule.calculateDose(request);
     }
 
@@ -83,7 +81,7 @@ public class CSVDosageConverterImplTest {
         when(csvReader
                 .readCsvFileToMemory(any(CSVFile.class), Matchers.<Class<OrderSetDrugRow>>any()))
                 .thenReturn(drugRows);
-        DosageRequest request = new DosageRequest("drug10", "patientId", 10, "mg", "testorderset", "custom");
+        DosageRequest request = new DosageRequest("drug10", "patientId", 10, "mg", "testorderset", "custom", null);
         csvBasedDosageRule.calculateDose(request);
     }
 
@@ -96,7 +94,7 @@ public class CSVDosageConverterImplTest {
         when(csvReader
                 .readCsvFileToMemory(any(CSVFile.class), Matchers.<Class<OrderSetDrugRow>>any()))
                 .thenReturn(drugRows);
-        DosageRequest request = new DosageRequest("drug1", "patientId", 10, "mg", "testorderset", "custom");
+        DosageRequest request = new DosageRequest("drug1", "patientId", 10, "mg", "testorderset", "custom", null);
         Dose newDose = csvBasedDosageRule.calculateDose(request);
         assertNotNull(newDose);
         assertEquals("drug1", newDose.getDrugName());
@@ -114,7 +112,7 @@ public class CSVDosageConverterImplTest {
         when(csvReader
                 .readCsvFileToMemory(any(CSVFile.class), Matchers.<Class<OrderSetDrugRow>>any()))
                 .thenReturn(drugRows);
-        DosageRequest request = new DosageRequest("drug1", "patientId", 10, "mg", "testorderset", "custom");
+        DosageRequest request = new DosageRequest("drug1", "patientId", 10, "mg", "testorderset", "custom", null);
         Dose newDose = csvBasedDosageRule.calculateDose(request);
         assertNotNull(newDose);
         assertEquals("drug1", newDose.getDrugName());
@@ -131,7 +129,7 @@ public class CSVDosageConverterImplTest {
         when(csvReader
                 .readCsvFileToMemory(any(CSVFile.class), Matchers.<Class<OrderSetDrugRow>>any()))
                 .thenReturn(drugRows);
-        DosageRequest request = new DosageRequest("drug1", "patientId", 10, "mg", "testorderset", "custom");
+        DosageRequest request = new DosageRequest("drug1", "patientId", 10, "mg", "testorderset", "custom", null);
         csvBasedDosageRule.calculateDose(request);
     }
 }

@@ -7,6 +7,7 @@ import java.io.IOException;
 public class DosageRequest {
 
     private String patientUuid;
+    private String visitUuid;
     private String drugName;
     private double baseDose;
     private String doseUnit;
@@ -16,13 +17,20 @@ public class DosageRequest {
     private DosageRequest() {
     }
 
-    public DosageRequest(String drugName, String patientUuid, double baseDose, String doseUnit, String orderSetName, String dosingRule) {
+    public DosageRequest(String drugName,
+                         String patientUuid,
+                         double baseDose,
+                         String doseUnit,
+                         String orderSetName,
+                         String dosingRule,
+                         String visitUuid) {
         this.patientUuid = patientUuid;
         this.drugName = drugName;
         this.baseDose = baseDose;
         this.doseUnit = doseUnit;
         this.orderSetName = orderSetName;
-        this.dosingRule=dosingRule;
+        this.dosingRule = dosingRule;
+        this.visitUuid = visitUuid;
     }
 
     public DosageRequest(String jsonRequest) throws IOException {
@@ -33,6 +41,7 @@ public class DosageRequest {
         this.doseUnit = req.getDoseUnit();
         this.dosingRule=req.getDosingRule();
         this.orderSetName = req.getOrderSetName();
+        this.visitUuid = req.getVisitUuid();
     }
 
     public String getPatientUuid() {
@@ -83,5 +92,13 @@ public class DosageRequest {
     {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(jsonRequest, DosageRequest.class);
+    }
+
+    public String getVisitUuid() {
+        return visitUuid;
+    }
+
+    public void setVisitUuid(String visitUuid) {
+        this.visitUuid = visitUuid;
     }
 }

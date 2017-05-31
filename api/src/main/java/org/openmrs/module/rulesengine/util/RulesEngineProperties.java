@@ -3,13 +3,11 @@ package org.openmrs.module.rulesengine.util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.bahmni.extensions.BahmniExtensions;
 import org.openmrs.module.rulesengine.engine.RulesEngineImpl;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 public class RulesEngineProperties {

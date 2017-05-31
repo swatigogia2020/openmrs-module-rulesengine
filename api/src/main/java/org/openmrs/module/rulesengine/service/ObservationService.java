@@ -2,11 +2,10 @@ package org.openmrs.module.rulesengine.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.openmrs.Encounter;
-import org.openmrs.Obs;
-import org.openmrs.Patient;
+import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.rulesengine.CIELDictionary;
 import org.openmrs.module.rulesengine.util.RulesEngineProperties;
@@ -31,33 +30,49 @@ public class ObservationService {
         }
     }
 
-    public static Double getLatestObsValueNumeric(Patient patient, ConceptRepo concept) throws Exception {
-        Obs observation = getLatestObservation(patient, identifyConceptUuid(concept), concept.cName);
-        if (null == observation) {
-            throw new APIException(String.format("Observation for %s is not captured.", concept.cName));
+    public static Double getLatestObsValueNumeric(Patient patient, ConceptRepo concept, String visitUuid) throws Exception {
+        Obs observation = getLatestObservation(patient, identifyConceptUuid(concept), concept.cName, visitUuid);
+        if (observation != null) {
+            return observation.getValueNumeric();
         }
-        return observation.getValueNumeric();
+        return null;
     }
 
-    private static Obs getLatestObservation(Patient patient, String conceptUuid, String name) throws Exception {
-        ObsService obsService = Context.getObsService();
+    private static Obs getLatestObservation(Patient patient, String conceptUuid, String name, String visitUuid) throws Exception {
         org.openmrs.Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
         if (concept == null) {
             throw new APIException(String.format("Concept [%s] is not configured in rules.", name));
         }
-        List<Obs> observations = null;
-        try {
-            Encounter selectedEncounter = EncounterService.getLatestEncounterByPatient(patient);
-
-            observations = obsService.getObservations(Arrays.asList(patient.getPerson()), Arrays.asList(selectedEncounter), Arrays.asList(concept),
-                    null, null, null, null, null, null, null, null, false);
-        } catch (Exception e) {
-            throw new Exception(String.format("Please capture Height and/or weight for current visit."));
+        List<Obs> observations;
+        if (visitUuid != null) {
+            observations = getObsFromGivenVisit(patient, visitUuid, concept);
+        } else {
+            observations = getObsFromAcrossVisits(patient, concept);
         }
         if (CollectionUtils.isEmpty(observations)) {
             return null;
         }
         return observations.get(0);
+    }
+
+    private static List<Obs> getObsFromGivenVisit(Patient patient, String visitUuid, Concept concept) {
+        List<Obs> observations = null;
+        VisitService visitService = Context.getVisitService();
+        Visit visit = visitService.getVisitByUuid(visitUuid);
+        if (visit.getNonVoidedEncounters().size() != 0) {
+            observations = getObservations(Arrays.asList(patient.getPerson()), visit.getNonVoidedEncounters(), Arrays.asList(concept));
+        }
+        return observations;
+    }
+
+    private static List<Obs> getObsFromAcrossVisits(Patient patient, Concept concept) {
+        return getObservations(Arrays.asList(patient.getPerson()), null, Arrays.asList(concept));
+    }
+
+    private static List<Obs> getObservations(List<Person> patients, List<Encounter> encounters, List<Concept> concepts) {
+        ObsService obsService = Context.getObsService();
+        return obsService.getObservations(patients, encounters, concepts,
+                null, null, null, null, null, null, null, null, false);
     }
 
     private static String identifyConceptUuid(ConceptRepo concept) {

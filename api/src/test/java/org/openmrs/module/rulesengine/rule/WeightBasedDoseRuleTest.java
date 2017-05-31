@@ -35,10 +35,10 @@ public class WeightBasedDoseRuleTest  {
         Patient patient= mock(Patient.class);
         when(patient.getAge()).thenReturn(20);
         when(PatientService.getPatientByUuid(anyString())).thenReturn(patient);
-        when(ObservationService.getLatestObsValueNumeric(any(Patient.class),any(ObservationService.ConceptRepo.class)))
+        when(ObservationService.getLatestObsValueNumeric(any(Patient.class),any(ObservationService.ConceptRepo.class), anyString()))
                 .thenReturn(50.0);
 
-        DosageRequest dosageRequest = new DosageRequest("paracetamol","person_1055_uuid", 10.0, "mg/kg","testorderset","mg/kg");
+        DosageRequest dosageRequest = new DosageRequest("paracetamol","person_1055_uuid", 10.0, "mg/kg","testorderset","mg/kg", null);
 
         Dose dose = weightBasedDoseRule.calculateDose(dosageRequest);
         assertEquals(500, dose.getValue(), 0.0);

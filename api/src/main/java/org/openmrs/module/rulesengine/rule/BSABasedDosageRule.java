@@ -1,15 +1,13 @@
 package org.openmrs.module.rulesengine.rule;
 
-import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.module.rulesengine.domain.DosageRequest;
 import org.openmrs.module.rulesengine.domain.Dose;
 import org.openmrs.module.rulesengine.domain.RuleName;
-import org.openmrs.module.rulesengine.service.EncounterService;
 import org.openmrs.module.rulesengine.service.ObservationService;
 import org.openmrs.module.rulesengine.service.PatientService;
 import org.openmrs.module.rulesengine.util.BahmniMath;
-import org.springframework.stereotype.Component;
+import org.openmrs.module.rulesengine.util.Validator;
 
 import java.util.Date;
 
@@ -24,17 +22,15 @@ public class BSABasedDosageRule implements DosageRule {
     }
 
     public Dose calculateDose(DosageRequest request) throws Exception {
-
+        String visitUuid = request.getVisitUuid();
         Patient patient = PatientService.getPatientByUuid(request.getPatientUuid());
+        Double height = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT, visitUuid);
+        Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT, visitUuid);
 
-        Double height = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT);
-        Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
+        Validator.validateHeightAndWeight(height, weight, ObservationService.ConceptRepo.HEIGHT, ObservationService.ConceptRepo.WEIGHT);
 
-        Encounter selectedEncounter = EncounterService.getLatestEncounterByPatient(patient);
-
-        Date asOfDate = selectedEncounter.getEncounterDatetime();
+        Date asOfDate = new Date();
         Integer ageInYears = BahmniMath.ageInYears(patient.getBirthdate(), asOfDate);
-
 
         Double bsa = calculateBSA(height, weight, ageInYears);
 

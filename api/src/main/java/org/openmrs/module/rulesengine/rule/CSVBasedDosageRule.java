@@ -3,21 +3,18 @@ package org.openmrs.module.rulesengine.rule;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bahmni.csv.CSVFile;
-import org.openmrs.module.rulesengine.domain.RuleName;
-import org.openmrs.module.rulesengine.engine.RulesEngine;
-import org.openmrs.module.rulesengine.engine.RulesEngineImpl;
-import org.openmrs.module.rulesengine.util.CSVReader;
 import org.openmrs.Patient;
 import org.openmrs.module.rulesengine.domain.DosageRequest;
 import org.openmrs.module.rulesengine.domain.Dose;
 import org.openmrs.module.rulesengine.domain.OrderSetDrugRow;
+import org.openmrs.module.rulesengine.domain.RuleName;
+import org.openmrs.module.rulesengine.engine.RulesEngine;
+import org.openmrs.module.rulesengine.engine.RulesEngineImpl;
 import org.openmrs.module.rulesengine.service.ObservationService;
 import org.openmrs.module.rulesengine.service.PatientService;
-import org.openmrs.module.rulesengine.util.RulesEngineProperties;
+import org.openmrs.module.rulesengine.util.CSVReader;
+import org.openmrs.module.rulesengine.util.Validator;
 import org.openmrs.util.OpenmrsUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.List;
@@ -53,7 +50,8 @@ public class CSVBasedDosageRule implements DosageRule {
 
             Patient patient = PatientService.getPatientByUuid(request.getPatientUuid());
 
-            Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
+            Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT, request.getVisitUuid());
+            Validator.validate(weight, ObservationService.ConceptRepo.WEIGHT);
 
             for (OrderSetDrugRow orderSetDrugRow : orderSetDrugRowList) {
                 if (orderSetDrugRow.getName().equals(request.getDrugName())) {
@@ -72,6 +70,7 @@ public class CSVBasedDosageRule implements DosageRule {
                         request.setBaseDose(Double.parseDouble(orderSetDrugRow.getDosage()));
                         return rule.calculateDose(request);
                     }
+                    throw new Exception("This patient doesn't fall under Age/Weight range defined in the dose calculation rule for drug "+request.getDrugName()+"'");
                 }
             }
         }

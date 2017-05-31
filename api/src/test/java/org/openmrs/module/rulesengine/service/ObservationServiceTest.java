@@ -1,20 +1,15 @@
 package org.openmrs.module.rulesengine.service;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openmrs.Patient;
-import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.rulesengine.RulesEngineBaseIT;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ObservationServiceTest extends RulesEngineBaseIT {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -22,41 +17,45 @@ public class ObservationServiceTest extends RulesEngineBaseIT {
     }
 
     @Test
-    public void shouldThrowExceptionHeightNotAvailableWhenHeightObsDoesNotExist() throws Exception {
-        expectedException.expect(APIException.class);
-        expectedException.expectMessage("Observation for Height is not captured.");
+    public void shouldReturnNullWhenHeightObsDoesNotExistInAnyVisit() throws Exception {
         Patient patient = Context.getPatientService().getPatientByUuid("person_1031_uuid");
-        ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT);
+        Double latestObsValueNumeric = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT, null);
+        assertNull(latestObsValueNumeric);
     }
 
     @Test
-    public void shouldReturnHeightOfThePatient() throws Exception {
-        Patient patient = Context.getPatientService().getPatientByUuid("person_1055_uuid");
-        Double latestHeight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT);
+    public void shouldReturnNullWhenHeightObsDoesNotExistInGivenVisit() throws Exception {
+        Patient patient = Context.getPatientService().getPatientByUuid("person_2000_uuid");
+        Double latestObsValueNumeric = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT, "visit_uuid_2001");
+        assertNull(latestObsValueNumeric);
+    }
+
+    @Test
+    public void shouldReturnLatestHeightOfThePatientFromAllVisits() throws Exception {
+        Patient patient = Context.getPatientService().getPatientByUuid("person_2000_uuid");
+        Double latestHeight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT, null);
+        assertEquals(175.0, latestHeight, 0.0);
+    }
+
+    @Test
+    public void shouldReturnLatestHeightOfThePatientFromGivenVisit() throws Exception {
+        Patient patient = Context.getPatientService().getPatientByUuid("person_2000_uuid");
+        Double latestHeight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT, "visit_uuid_2000");
         assertEquals(170.0, latestHeight, 0.0);
     }
 
     @Test
-    public void shouldThrowExceptionWeightNotAvailableWhenWeightObsDoesNotExist() throws Exception {
-        expectedException.expect(APIException.class);
-        expectedException.expectMessage("Observation for Weight is not captured.");
+    public void shouldReturnNullIfWhenWeightObsDoesNotExist() throws Exception {
         Patient patient = Context.getPatientService().getPatientByUuid("person_1032_uuid");
-        ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
+        Double latestObsValueNumeric = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT, null);
+        assertNull(latestObsValueNumeric);
     }
 
     @Test
     public void shouldReturnWeightOfThePatient() throws Exception {
         Patient patient = Context.getPatientService().getPatientByUuid("person_1055_uuid");
-        Double latestWeight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
+        Double latestWeight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT, null);
         assertEquals(80.0, latestWeight, 0.0);
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenEncounterIsNotFound() throws Exception {
-        expectedException.expect(Exception.class);
-        expectedException.expectMessage("Please capture Height and/or weight for current visit.");
-        Patient patient = Context.getPatientService().getPatientByUuid("person_1034_uuid");
-        ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT);
     }
 
 }

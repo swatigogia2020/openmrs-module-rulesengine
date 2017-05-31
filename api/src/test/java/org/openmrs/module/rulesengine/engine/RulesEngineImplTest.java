@@ -73,7 +73,7 @@ public class RulesEngineImplTest {
 
     @Test
     public void rulesEngineFindsTheCorrectRuleObjectAndCalculates() throws Exception {
-        DosageRequest request=new DosageRequest("testName","1",10,"mg","custom","testrule");
+        DosageRequest request=new DosageRequest("testName","1",10,"mg","custom","testrule", null);
         Dose dose = rulesEngine.calculateDose(request);
 
         Assert.assertNotNull(dose);
