@@ -51,8 +51,9 @@ public class CSVBasedDosageRule implements DosageRule {
             Patient patient = PatientService.getPatientByUuid(request.getPatientUuid());
 
             Double weight = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.WEIGHT, request.getVisitUuid());
-            Validator.validate(weight, ObservationService.ConceptRepo.WEIGHT);
+            Double height = ObservationService.getLatestObsValueNumeric(patient, ObservationService.ConceptRepo.HEIGHT, request.getVisitUuid());
 
+            validateObservations(orderSetDrugRowList, weight, height);
             for (OrderSetDrugRow orderSetDrugRow : orderSetDrugRowList) {
                 if (orderSetDrugRow.getName().equals(request.getDrugName())) {
                     if (Integer.parseInt(orderSetDrugRow.getMinAge()) <= patient.getAge() && patient.getAge() < Integer.parseInt(orderSetDrugRow.getMaxAge())
@@ -70,13 +71,29 @@ public class CSVBasedDosageRule implements DosageRule {
                         request.setBaseDose(Double.parseDouble(orderSetDrugRow.getDosage()));
                         return rule.calculateDose(request);
                     }
-                    throw new Exception("This patient doesn't fall under Age/Weight range defined in the dose calculation rule for drug "+request.getDrugName()+"'");
+                    throw new Exception("This patient doesn't fall under Age/Weight range defined in the dose calculation rule for drug '"+request.getDrugName()+"'");
                 }
             }
         }
 
         log.error("Dosage definition not found in CSV file for '"+request.getDrugName()+"'");
         throw new Exception("Dosage definition not found in CSV file for '"+request.getDrugName()+"'");
+    }
+
+    private void validateObservations(List<OrderSetDrugRow> orderSetDrugRowList, Double weight, Double height) throws Exception {
+        Boolean validateHeightAndWeight = false;
+        for (OrderSetDrugRow orderSetDrugRow : orderSetDrugRowList) {
+            if (orderSetDrugRow.getRule().equals("mg/m2")) {
+                 validateHeightAndWeight = true;
+                 break;
+            }
+        }
+        if (validateHeightAndWeight) {
+            Validator.validateHeightAndWeight(height, weight, ObservationService.ConceptRepo.HEIGHT, ObservationService.ConceptRepo.WEIGHT);
+        }
+        else {
+            Validator.validate(weight, ObservationService.ConceptRepo.WEIGHT);
+        }
     }
 
     private String getCSVFilePath(String relativePath) {
